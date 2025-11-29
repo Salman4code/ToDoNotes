@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.masonry {
+  column-gap: 1rem;
+}
+
+.masonry.cols {
+  column-count: 2;
+}
+
+@media (min-width: 640px) {
+  .masonry.cols {
+    column-count: 3;
+  }
+}
+
+@media (min-width: 1024px) {
+  .masonry.cols {
+    column-count: 4;
+  }
+}
+
+.note-card,
+.note-card * {
+  break-inside: avoid;
+}
+
+.note-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Masonry */
+.masonry { column-gap: 1rem; }
+.masonry.cols { column-count: 2; }
+@media (min-width: 640px) { .masonry.cols { column-count: 3; } }
+@media (min-width: 1024px) { .masonry.cols { column-count: 4; } }
+
+/* Prevent cards breaking across columns */
+.note-card, .note-card * {
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+/* Drag handle: ensure enough hit area and no touch scroll interference */
+.drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none; /* critical to allow drag on mobile handle */
+}
+
+/* Optional: visual cue */
+.drag-handle:hover { background: rgba(255,255,255,0.6); }
