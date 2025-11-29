@@ -1,54 +1,72 @@
-// components/NoteForm.tsx
-"use client";
-
 import { useState } from "react";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+interface NoteFormProps {
+  onAdded: () => void;
+}
 
-export default function NoteForm({ onSaved }: { onSaved: () => void }) {
+const NoteForm = ({ onAdded }: NoteFormProps) => {
   const [title, setTitle] = useState("");
-  const [desc, setDesc] = useState("");
-  const [color, setColor] = useState("#ffffff");
+  const [content, setContent] = useState("");
 
-  const save = async () => {
-    if (!title.trim()) return alert("Add title");
-    try {
-      const res = await fetch(`${API}/notes`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, description: desc, type: "text", color }),
-      });
-      if (!res.ok) throw new Error("Failed");
-      setTitle("");
-      setDesc("");
-      setColor("#ffffff");
-      onSaved();
-    } catch (e) {
-      console.error(e);
-      alert("Error saving note");
-    }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    await fetch("http://localhost:8000/api/notes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title, content }),
+    });
+
+    setTitle("");
+    setContent("");
+    onAdded();
   };
 
   return (
-    <div className="p-3 mb-3 rounded-lg bg-white shadow">
+    <form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
       <input
-        className="w-full mb-2 font-medium"
+        type="text"
         placeholder="Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
+        style={{
+          width: "100%",
+          padding: "10px",
+          marginBottom: "10px",
+          borderRadius: "8px",
+          border: "1px solid #ccc",
+        }}
       />
 
       <textarea
-        className="w-full text-sm h-20"
-        placeholder="Description"
-        value={desc}
-        onChange={(e) => setDesc(e.target.value)}
+        placeholder="Write your note..."
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        style={{
+          width: "100%",
+          height: "90px",
+          padding: "10px",
+          borderRadius: "8px",
+          border: "1px solid #ccc",
+        }}
       />
 
-      <div className="flex items-center gap-2 mt-2">
-        <input type="color" value={color} onChange={(e) => setColor(e.target.value)} className="w-8 h-8 p-0 border-0" />
-        <button onClick={save} className="px-3 py-1 rounded bg-blue-600 text-white">Save</button>
-      </div>
-    </div>
+      <button
+        type="submit"
+        style={{
+          padding: "10px 20px",
+          marginTop: "10px",
+          background: "#0070f3",
+          color: "#fff",
+          border: "none",
+          borderRadius: "8px",
+          cursor: "pointer",
+        }}
+      >
+        Add Note
+      </button>
+    </form>
   );
-}
+};
+
+export default NoteForm;
