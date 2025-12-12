@@ -1,37 +1,47 @@
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+"use client";
 
-interface NoteCardProps {
-  note: {
-    _id: string;
-    title: string;
-    content: string;
-  };
-}
+type NoteType = {
+  _id: string;
+  title?: string;
+  description?: string;
+  color?: string;
+  isPinned?: boolean;
+  todos?: { text: string; completed: boolean }[];
+  createdAt?: string;
+};
 
-const NoteCard = ({ note }: NoteCardProps) => {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: note._id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    padding: "16px",
-    background: "#fff",
-    borderRadius: "10px",
-    marginBottom: "12px",
-    border: "1px solid #ddd",
-    cursor: "grab",
-    boxShadow: "0px 2px 6px rgba(0,0,0,0.1)",
-  };
-
+const NoteCard = ({ note }: { note: NoteType }) => {
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <h3 style={{ margin: 0, fontSize: "18px" }}>{note.title}</h3>
-      <p style={{ marginTop: "6px", fontSize: "15px", whiteSpace: "pre-wrap" }}>
-        {note.content}
-      </p>
-    </div>
+    <article style={{ background: note.color || "#fff" }} className="rounded-lg p-4 shadow-sm border border-gray-100">
+      <div className="flex items-start">
+        <h3 className="font-semibold text-gray-800 flex-1">{note.title}</h3>
+        <button className="text-gray-500 ml-2">📌</button>
+      </div>
+
+      {note.description && <p className="text-sm text-gray-700 mt-2 whitespace-pre-wrap">{note.description}</p>}
+
+      {note.todos && note.todos.length > 0 && (
+        <ul className="mt-2 space-y-1">
+          {note.todos.map((t, i) => (
+            <li key={i} className={`flex items-center gap-2 text-sm ${t.completed ? "line-through text-gray-400" : ""}`}>
+              <input type="checkbox" readOnly checked={t.completed} />
+              <span>{t.text}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <div className="mt-3 border-t pt-2 flex items-center justify-between text-gray-500">
+        <div className="flex items-center gap-3 text-sm">
+          <button>🎨</button>
+          <button>🔔</button>
+          <button>👥</button>
+          <button>🖼️</button>
+          <button>⋯</button>
+        </div>
+        <div className="text-xs text-gray-400">{note.createdAt ? new Date(note.createdAt).toLocaleString() : ""}</div>
+      </div>
+    </article>
   );
 };
 
